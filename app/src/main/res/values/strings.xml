@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">VKWALLker</string>
+    <string name="goToWall">Go to wall</string>
+    <string name="logout">logout</string>
+    <string name="signIn">sign in</string>
+    <integer name="com_vk_sdk_AppId">5709835</integer>
+</resources>
