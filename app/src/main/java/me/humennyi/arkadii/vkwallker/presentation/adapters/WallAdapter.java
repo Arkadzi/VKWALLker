@@ -98,6 +98,14 @@ public class WallAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             UserInfoViewHolder holder = (UserInfoViewHolder) viewHolder;
             User user = (User) data.get(adapterPosition);
             holder.cityView.setText(user.getCity());
+            holder.about.setText(user.getAbout().trim());
+            holder.activities.setText(user.getActivities().trim());
+            String status = TextUtils.isEmpty(user.getStatus()) ?
+                    context.getString(R.string.noStatus) : String.format("\"%s\"", user.getStatus());
+            holder.status.setText(status);
+            holder.birthDate.setText(user.getBirthDate());
+            holder.interests.setText(user.getInterests().trim());
+            holder.mobilePhone.setText(user.getMobilePhone());
         } else if (viewHolder instanceof PostViewHolder && data.get(adapterPosition) instanceof Post) {
             PostViewHolder holder = (PostViewHolder) viewHolder;
             Post post = (Post) data.get(adapterPosition);
@@ -204,6 +212,18 @@ public class WallAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     static class UserInfoViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tv_city)
         TextView cityView;
+        @BindView(R.id.tv_about)
+        TextView about;
+        @BindView(R.id.tv_activities)
+        TextView activities;
+        @BindView(R.id.tv_status)
+        TextView status;
+        @BindView(R.id.tv_birth_date)
+        TextView birthDate;
+        @BindView(R.id.tv_interests)
+        TextView interests;
+        @BindView(R.id.tv_mobile_number)
+        TextView mobilePhone;
 
         public UserInfoViewHolder(View view) {
             super(view);
