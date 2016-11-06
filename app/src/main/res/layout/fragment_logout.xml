@@ -3,20 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:gravity="center_vertical"
     android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
     tools:context=".presentation.activities.LoginActivity">
 
     <Button
         android:id="@+id/continue_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/goToWall" />
+        android:backgroundTint="@color/colorAccent"
+        android:text="@string/goToWall"
+        android:textColor="#fff" />
 
     <Button
         android:id="@+id/logout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/logout" />
+        android:backgroundTint="@color/colorAccent"
+        android:text="@string/logout"
+        android:textColor="#fff" />
 </LinearLayout>
