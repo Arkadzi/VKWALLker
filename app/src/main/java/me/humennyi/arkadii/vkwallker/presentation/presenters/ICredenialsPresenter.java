@@ -9,7 +9,7 @@ import me.humennyi.arkadii.vkwallker.presentation.views.ICredentialView;
  * Created by arkadii on 11/5/16.
  */
 
-public interface ICredenialsPresenter extends IPresenter<ICredentialView> {
+public interface ICredenialsPresenter {
     void onSessionWakeUp(LoginState result);
 
     void onResume(LoginState loginState);
