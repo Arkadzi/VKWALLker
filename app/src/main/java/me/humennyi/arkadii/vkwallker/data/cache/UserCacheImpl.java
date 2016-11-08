@@ -39,7 +39,6 @@ public class UserCacheImpl implements UserCache {
                 if (userJson != null) {
                     userEntity = gson.fromJson(userJson, UserEntity.class);
                 }
-                Log.e("UserCache", "user " + userEntity);
                 subscriber.onNext(userEntity);
                 subscriber.onCompleted();
             }
@@ -59,7 +58,6 @@ public class UserCacheImpl implements UserCache {
             public void call(Subscriber<? super List<PostEntity>> subscriber) {
                 List<PostEntity> withOffset = dbHelper.getWithOffset(offset, count);
                 if (withOffset.isEmpty()) withOffset = null;
-                Log.e("UserCache", offset + " " + count + " " + withOffset);
                 subscriber.onNext(withOffset);
                 subscriber.onCompleted();
             }

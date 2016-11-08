@@ -41,8 +41,6 @@ public class VkApi {
             return getRemoteUserInfo();
         else
             return userCache.getUser().flatMap(userEntity -> {
-                Log.e("VkApi", "userEntity " + userEntity);
-
                 if (userEntity != null) return Observable.just(userEntity);
                 return getRemoteUserInfo();
             });
@@ -56,12 +54,10 @@ public class VkApi {
                 request.executeWithListener(new VKRequest.VKRequestListener() {
                     @Override
                     public void onComplete(VKResponse response) {
-                        Log.e("VkApi", "user response" + response.responseString);
                         Response<List<UserEntity>> userResponse = gson.fromJson(response.responseString,
                                 new TypeToken<Response<List<UserEntity>>>() {
                                 }.getType());
                         UserEntity userEntity = userResponse.response.get(0);
-                        Log.e("VkApi", userEntity.toString());
                         userCache.saveUser(userEntity);
                         subscriber.onNext(userEntity);
                         subscriber.onCompleted();
@@ -78,7 +74,6 @@ public class VkApi {
     }
 
     public Observable<List<PostEntity>> getPosts(boolean rewrite, int offset, int count) {
-        Log.e("VkApi", "getPosts " + rewrite + " " + offset + " " + count);
         if (rewrite)
             return getRemotePosts(offset, count, true);
         else

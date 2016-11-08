@@ -152,7 +152,6 @@ public class WallPresenter extends ProgressPresenter<IWallView> implements IWall
                 super.onNext(response);
                 IWallView view = getView();
                 if (view != null) {
-                    Log.e("response", String.valueOf(response.getPosts().size()));
                     view.setData(response.getUser(), response.getPosts());
                 }
             }

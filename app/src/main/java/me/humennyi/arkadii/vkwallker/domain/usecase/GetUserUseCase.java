@@ -38,16 +38,12 @@ public class GetUserUseCase extends UseCase<VkInfo> {
                     return repository.getPosts(getOffset(), count, rewrite);
                 }
             }, VkInfo::new).doOnNext(vkInfo1 -> {
-                Log.e("GetUserUseCase", "map");
                 if (rewrite) {
                     vkInfo.setPosts(null);
                 }
                 rewrite = false;
-                Log.e("GetUserUseCase", "map " + 2);
                 this.vkInfo.setUser(vkInfo1.getUser());
-                Log.e("GetUserUseCase", "map " + 3);
                 this.vkInfo.addPosts(vkInfo1.getPosts());
-                Log.e("GetUserUseCase", "map " + 4);
             });
         } else {
             return repository.getPosts(getOffset(), count, rewrite)
@@ -68,10 +64,6 @@ public class GetUserUseCase extends UseCase<VkInfo> {
     public void setCount(int count) {
         this.count = count;
     }
-
-//    public void setForceNew(boolean forceNew) {
-//        this.forceNew = forceNew;
-//    }
 
     public User getCachedUser() {
         return vkInfo.getUser();
