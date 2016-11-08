@@ -42,4 +42,12 @@ public class VkInfo {
     public void setPosts(List<Post> posts) {
         this.posts = posts;
     }
+
+    @Override
+    public String toString() {
+        return "VkInfo{" +
+                "user=" + user +
+                ", posts=" + posts +
+                '}';
+    }
 }

@@ -31,17 +31,21 @@ public class SessionDataRepository implements SessionRepository {
     }
 
     @Override
-    public Observable<User> getUserInfo(boolean forceRemote) {
-        return vkApi.getUserInfo().map(userMapper::transform);
+    public Observable<User> getUserInfo(boolean rewrite) {
+        Log.e("repository", "get user info");
+        return vkApi.getUserInfo(rewrite).map(userMapper::transform);
     }
 
     @Override
-    public Observable<List<Post>> getPosts(int offset, int count, boolean forceUpdated) {
-        return vkApi.getPosts(offset, count).map(items -> {
+    public Observable<List<Post>> getPosts(int offset, int count, boolean rewrite) {
+        Log.e("repository", "get posts");
+        return vkApi.getPosts(rewrite, offset, count).map(items -> {
+            Log.e("repository", "4");
             List<Post> posts = new ArrayList<>();
             for (PostEntity item : items) {
                 posts.add(postMapper.transform(item));
             }
+            Log.e("repository", "5 " + items.size() + " " + posts.size());
             return posts;
         });
     }

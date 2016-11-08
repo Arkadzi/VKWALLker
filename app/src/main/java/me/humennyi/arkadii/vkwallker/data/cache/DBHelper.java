@@ -36,7 +36,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                 POST_ID + " TEXT NOT NULL," +
                 POST_JSON + " TEXT NOT NULL," +
-                " UNIQUE (" + POST_ID + ")" +
+                " UNIQUE (" + POST_ID + ") ON CONFLICT REPLACE" +
                 ")" +
                 ";";
         db.execSQL(CREATE_TABLE);
@@ -71,7 +71,6 @@ public class DBHelper extends SQLiteOpenHelper {
             }
             cursor.close();
         }
-        Log.e("DBHelper", "read " + entities.size() + " entities");
         return entities;
     }
 

@@ -1,4 +1,4 @@
-package me.humennyi.arkadii.vkwallker.data.cache;
+package me.humennyi.arkadii.vkwallker.domain;
 
 import java.util.List;
 

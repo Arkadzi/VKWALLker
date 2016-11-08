@@ -23,9 +23,17 @@ public abstract class UseCase<T> {
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .cache()
-                    .doOnError((t) -> observable = null)
-                    .doOnCompleted(() -> observable = null);
+                    .doOnError((t) -> onError())
+                    .doOnCompleted(this::onCompleted);
         subscription = observable.subscribe(subscriber);
+    }
+
+    protected void onCompleted() {
+        observable = null;
+    }
+
+    protected void onError() {
+        observable = null;
     }
 
     protected abstract Observable<T> getUseCaseObservable();
@@ -39,10 +47,5 @@ public abstract class UseCase<T> {
         if (!subscription.isUnsubscribed()) {
             subscription.unsubscribe();
         }
-    }
-
-    protected void stopExecution() {
-        unsubscribe();
-        observable = null;
     }
 }

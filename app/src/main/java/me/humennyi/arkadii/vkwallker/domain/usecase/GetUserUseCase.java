@@ -1,10 +1,11 @@
 package me.humennyi.arkadii.vkwallker.domain.usecase;
 
-import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import me.humennyi.arkadii.vkwallker.domain.Post;
 import me.humennyi.arkadii.vkwallker.domain.SessionRepository;
@@ -16,10 +17,10 @@ import rx.functions.Func1;
 /**
  * Created by arkadii on 11/5/16.
  */
+@Singleton
 public class GetUserUseCase extends UseCase<VkInfo> {
     private final SessionRepository repository;
     private int count;
-    private boolean forceNew=true;
     private boolean rewrite;
     private final VkInfo vkInfo = new VkInfo();
 
@@ -30,28 +31,38 @@ public class GetUserUseCase extends UseCase<VkInfo> {
 
     @Override
     protected Observable<VkInfo> getUseCaseObservable() {
-        if (getCachedUser() == null) {
-            return repository.getUserInfo(forceNew).flatMap(new Func1<User, Observable<List<Post>>>() {
+        if (rewrite || getCachedUser() == null) {
+            return repository.getUserInfo(rewrite).flatMap(new Func1<User, Observable<List<Post>>>() {
                 @Override
                 public Observable<List<Post>> call(User user) {
-                    return repository.getPosts(getOffset(), count, forceNew);
+                    return repository.getPosts(getOffset(), count, rewrite);
                 }
-            }, VkInfo::new).doOnNext(vkInfo -> {
+            }, VkInfo::new).doOnNext(vkInfo1 -> {
+                Log.e("GetUserUseCase", "map");
                 if (rewrite) {
                     vkInfo.setPosts(null);
                 }
                 rewrite = false;
-                this.vkInfo.setUser(vkInfo.getUser());
-                this.vkInfo.addPosts(vkInfo.getPosts());
+                Log.e("GetUserUseCase", "map " + 2);
+                this.vkInfo.setUser(vkInfo1.getUser());
+                Log.e("GetUserUseCase", "map " + 3);
+                this.vkInfo.addPosts(vkInfo1.getPosts());
+                Log.e("GetUserUseCase", "map " + 4);
             });
         } else {
-            return repository.getPosts(getOffset(), count, forceNew)
+            return repository.getPosts(getOffset(), count, rewrite)
                     .map(posts -> new VkInfo(null, posts))
                     .doOnNext(vkInfo1 -> {
                         rewrite = false;
                         this.vkInfo.addPosts(vkInfo1.getPosts());
                     });
         }
+    }
+
+    @Override
+    protected void onError() {
+        super.onError();
+        rewrite = false;
     }
 
     public void setCount(int count) {
@@ -71,7 +82,7 @@ public class GetUserUseCase extends UseCase<VkInfo> {
     }
 
     private int getOffset() {
-        if (getCachedPosts() == null) return 0;
+        if (rewrite || getCachedPosts() == null) return 0;
         return getCachedPosts().size();
     }
 
@@ -80,7 +91,17 @@ public class GetUserUseCase extends UseCase<VkInfo> {
 
     }
 
+    public boolean isRewrite() {
+        return rewrite;
+    }
+
     public boolean hasCache() {
         return getCachedPosts() != null && getCachedUser() != null;
+    }
+
+    public void clear() {
+        rewrite = false;
+        vkInfo.setUser(null);
+        vkInfo.setPosts(null);
     }
 }

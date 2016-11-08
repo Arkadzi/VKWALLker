@@ -1,6 +1,7 @@
 package me.humennyi.arkadii.vkwallker.presentation.presenters;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.List;
 
@@ -39,7 +40,8 @@ public class WallPresenter extends ProgressPresenter<IWallView> implements IWall
         if (getUserUseCase.hasCache()) {
             view.setData(getUserUseCase.getCachedUser(), getUserUseCase.getCachedPosts());
             if (getUserUseCase.isWorking()) {
-                getUserUseCase.execute(getAppendQuerySubscriber());
+                getUserUseCase.execute(getUserUseCase.isRewrite() ?
+                        getRefreshQuerySubscriber() : getAppendQuerySubscriber());
             }
         } else {
             getUserUseCase.execute(getFirstQuerySubscriber());
@@ -81,7 +83,6 @@ public class WallPresenter extends ProgressPresenter<IWallView> implements IWall
                 if (view != null) {
                     view.hideAppendProgress();
                 }
-                showMessage(getMessages().getError(t));
             }
         }) {
             @Override
@@ -151,6 +152,7 @@ public class WallPresenter extends ProgressPresenter<IWallView> implements IWall
                 super.onNext(response);
                 IWallView view = getView();
                 if (view != null) {
+                    Log.e("response", String.valueOf(response.getPosts().size()));
                     view.setData(response.getUser(), response.getPosts());
                 }
             }

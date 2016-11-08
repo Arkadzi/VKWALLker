@@ -9,6 +9,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import me.humennyi.arkadii.vkwallker.Constants;
+import me.humennyi.arkadii.vkwallker.domain.UserCache;
+import me.humennyi.arkadii.vkwallker.domain.usecase.GetUserUseCase;
 import me.humennyi.arkadii.vkwallker.presentation.utils.Messages;
 import me.humennyi.arkadii.vkwallker.presentation.views.ICredentialView;
 
@@ -19,9 +21,14 @@ import me.humennyi.arkadii.vkwallker.presentation.views.ICredentialView;
 @Singleton
 public class CredentialsPresenter extends BasePresenter<ICredentialView> implements ICredenialsPresenter {
 
+    private UserCache userCache;
+    private GetUserUseCase getUserUseCase;
+
     @Inject
-    public CredentialsPresenter(Messages messages) {
+    public CredentialsPresenter(Messages messages, UserCache userCache, GetUserUseCase getUserUseCase) {
         super(messages);
+        this.userCache = userCache;
+        this.getUserUseCase = getUserUseCase;
     }
 
 
@@ -71,6 +78,9 @@ public class CredentialsPresenter extends BasePresenter<ICredentialView> impleme
     public void onLogoutButtonClick() {
         ICredentialView view = getView();
         if (view != null) {
+            getUserUseCase.clear();
+            userCache.clearUser();
+            userCache.clearPosts();
             view.tryLogOut();
         }
     }

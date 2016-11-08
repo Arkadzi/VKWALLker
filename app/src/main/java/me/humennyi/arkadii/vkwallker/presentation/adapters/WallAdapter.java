@@ -153,6 +153,7 @@ public class WallAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public void setData(User user, List<Post> posts) {
         data.clear();
+        Log.e("WallAdapter", data.size() + " " + posts.size());
         data.add(user);
         data.addAll(posts);
         notifyDataSetChanged();

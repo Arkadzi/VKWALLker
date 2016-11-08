@@ -4,14 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-
 import com.google.gson.Gson;
 
 import java.util.List;
 
 import me.humennyi.arkadii.vkwallker.data.entities.PostEntity;
 import me.humennyi.arkadii.vkwallker.data.entities.UserEntity;
-import me.humennyi.arkadii.vkwallker.domain.exceptions.NoUserException;
+import me.humennyi.arkadii.vkwallker.domain.UserCache;
 import rx.Observable;
 import rx.Subscriber;
 
@@ -30,18 +29,19 @@ public class UserCacheImpl implements UserCache {
 
     @Override
     public Observable<UserEntity> getUser() {
+
         return Observable.create(new Observable.OnSubscribe<UserEntity>() {
             @Override
             public void call(Subscriber<? super UserEntity> subscriber) {
                 SharedPreferences sharedPreferences = context.getSharedPreferences(USER, Context.MODE_PRIVATE);
                 String userJson = sharedPreferences.getString(USER, null);
+                UserEntity userEntity = null;
                 if (userJson != null) {
-                    UserEntity userEntity = gson.fromJson(userJson, UserEntity.class);
-                    subscriber.onNext(userEntity);
-                    subscriber.onCompleted();
-                } else {
-                    subscriber.onError(null);
+                    userEntity = gson.fromJson(userJson, UserEntity.class);
                 }
+                Log.e("UserCache", "user " + userEntity);
+                subscriber.onNext(userEntity);
+                subscriber.onCompleted();
             }
         });
     }
@@ -57,15 +57,11 @@ public class UserCacheImpl implements UserCache {
         return Observable.create(new Observable.OnSubscribe<List<PostEntity>>() {
             @Override
             public void call(Subscriber<? super List<PostEntity>> subscriber) {
-                try {
-                    List<PostEntity> withOffset = dbHelper.getWithOffset(offset, count);
-                    if (withOffset.isEmpty()) withOffset = null;
-                    Log.e("UserCache", offset + " " + count + " " + withOffset);
-                    subscriber.onNext(withOffset);
-                    subscriber.onCompleted();
-                } catch (Throwable e) {
-                    subscriber.onError(e);
-                }
+                List<PostEntity> withOffset = dbHelper.getWithOffset(offset, count);
+                if (withOffset.isEmpty()) withOffset = null;
+                Log.e("UserCache", offset + " " + count + " " + withOffset);
+                subscriber.onNext(withOffset);
+                subscriber.onCompleted();
             }
         });
     }
