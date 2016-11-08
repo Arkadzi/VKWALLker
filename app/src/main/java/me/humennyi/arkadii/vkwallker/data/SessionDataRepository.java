@@ -10,6 +10,8 @@ import java.util.List;
 import me.humennyi.arkadii.vkwallker.data.api.VkApi;
 import me.humennyi.arkadii.vkwallker.data.entities.PostEntity;
 import me.humennyi.arkadii.vkwallker.data.entities.ProfileEntity;
+import me.humennyi.arkadii.vkwallker.data.entities.UserEntity;
+import me.humennyi.arkadii.vkwallker.data.mapper.Mapper;
 import me.humennyi.arkadii.vkwallker.data.mapper.PostMapper;
 import me.humennyi.arkadii.vkwallker.data.mapper.UserMapper;
 import me.humennyi.arkadii.vkwallker.domain.Post;
@@ -23,29 +25,27 @@ import rx.Observable;
 
 public class SessionDataRepository implements SessionRepository {
     private final VkApi vkApi;
-    private final UserMapper userMapper = new UserMapper();
-    private final PostMapper postMapper = new PostMapper();
+    private Mapper<UserEntity, User> userMapper;
+    private Mapper<PostEntity, Post> postMapper;
 
-    public SessionDataRepository(VkApi vkApi) {
+    public SessionDataRepository(VkApi vkApi, Mapper<UserEntity, User> userMapper, Mapper<PostEntity, Post> postMapper) {
         this.vkApi = vkApi;
+        this.userMapper = userMapper;
+        this.postMapper = postMapper;
     }
 
     @Override
     public Observable<User> getUserInfo(boolean rewrite) {
-        Log.e("repository", "get user info");
-        return vkApi.getUserInfo(rewrite).map(userMapper::transform);
+        return vkApi.getUserInfo(rewrite).map(userEntity -> userMapper.transform(userEntity));
     }
 
     @Override
     public Observable<List<Post>> getPosts(int offset, int count, boolean rewrite) {
-        Log.e("repository", "get posts");
         return vkApi.getPosts(rewrite, offset, count).map(items -> {
-            Log.e("repository", "4");
             List<Post> posts = new ArrayList<>();
             for (PostEntity item : items) {
                 posts.add(postMapper.transform(item));
             }
-            Log.e("repository", "5 " + items.size() + " " + posts.size());
             return posts;
         });
     }

@@ -9,6 +9,8 @@ import dagger.Provides;
 import me.humennyi.arkadii.vkwallker.data.SessionDataRepository;
 import me.humennyi.arkadii.vkwallker.data.api.VkApi;
 import me.humennyi.arkadii.vkwallker.data.cache.DBHelper;
+import me.humennyi.arkadii.vkwallker.data.mapper.PostMapper;
+import me.humennyi.arkadii.vkwallker.data.mapper.UserMapper;
 import me.humennyi.arkadii.vkwallker.domain.UserCache;
 import me.humennyi.arkadii.vkwallker.data.cache.UserCacheImpl;
 import me.humennyi.arkadii.vkwallker.domain.SessionRepository;
@@ -38,6 +40,6 @@ public class DataModule {
     @Provides
     @Singleton
     public SessionRepository provideSessionRepository(VkApi vkApi) {
-        return new SessionDataRepository(vkApi);
+        return new SessionDataRepository(vkApi, new UserMapper(), new PostMapper());
     }
 }
