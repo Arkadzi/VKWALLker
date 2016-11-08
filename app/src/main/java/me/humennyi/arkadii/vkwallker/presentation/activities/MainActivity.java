@@ -13,11 +13,8 @@ import android.widget.Toast;
 
 
 import com.squareup.picasso.Picasso;
-import com.vk.sdk.api.VKApi;
-import com.vk.sdk.api.VKApiConst;
-import com.vk.sdk.api.VKBatchRequest;
-import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -25,6 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.humennyi.arkadii.vkwallker.R;
 import me.humennyi.arkadii.vkwallker.VKWallApplication;
+import me.humennyi.arkadii.vkwallker.domain.Post;
 import me.humennyi.arkadii.vkwallker.domain.User;
 import me.humennyi.arkadii.vkwallker.domain.VkInfo;
 import me.humennyi.arkadii.vkwallker.presentation.adapters.WallAdapter;
@@ -87,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements IWallView {
             }
         });
         refreshLayout.setOnRefreshListener(() -> {
-            refreshLayout.setRefreshing(false);
             presenter.onRefresh();
         });
         presenter.onCreate(this);
@@ -107,16 +104,25 @@ public class MainActivity extends AppCompatActivity implements IWallView {
     }
 
     @Override
-    public void setData(VkInfo response) {
-        User user = response.getUser();
-        Picasso.with(this).load(user.getPhotoUrl()).into(avatarView);
-        collapsingToolbarLayout.setTitle(user.getFirstName() + " " + user.getLastName());
-        adapter.setData(response);
+    public void addData(List<Post> posts) {
+        adapter.appendPosts(posts);
     }
 
     @Override
-    public void addData(VkInfo response) {
-        adapter.appendPosts(response.getPost());
+    public void setData(User user, List<Post> posts) {
+        Picasso.with(this).load(user.getPhotoUrl()).into(avatarView);
+        collapsingToolbarLayout.setTitle(user.getFirstName() + " " + user.getLastName());
+        adapter.setData(user, posts);
+    }
+
+    @Override
+    public void showRefresh() {
+        refreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void hideRefresh() {
+        refreshLayout.setRefreshing(false);
     }
 
     @Override

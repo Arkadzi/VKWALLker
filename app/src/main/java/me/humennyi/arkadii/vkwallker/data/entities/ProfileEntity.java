@@ -1,4 +1,4 @@
-package me.humennyi.arkadii.vkwallker.data;
+package me.humennyi.arkadii.vkwallker.data.entities;
 
 import com.google.gson.annotations.SerializedName;
 

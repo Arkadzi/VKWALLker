@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import me.humennyi.arkadii.vkwallker.data.AttachmentEntity;
-import me.humennyi.arkadii.vkwallker.data.PostEntity;
+import me.humennyi.arkadii.vkwallker.data.entities.AttachmentEntity;
+import me.humennyi.arkadii.vkwallker.data.entities.PostEntity;
 import me.humennyi.arkadii.vkwallker.domain.Post;
 
 /**
@@ -24,6 +24,7 @@ public class PostMapper implements Mapper<PostEntity, Post> {
         post.setLikesCount(obj.getLikes().getCount());
         post.setText(obj.getText());
         post.setRepost(obj.getCopyHistory() != null);
+        post.setId(obj.getId());
 
         Map<String, Integer> attachmentsCount = new HashMap<>();
         if (obj.getAttachments() != null) {

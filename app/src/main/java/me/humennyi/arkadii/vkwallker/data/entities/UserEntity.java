@@ -1,6 +1,8 @@
-package me.humennyi.arkadii.vkwallker.data;
+package me.humennyi.arkadii.vkwallker.data.entities;
 
 import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 
 /**
  * Created by arkadii on 11/5/16.

@@ -7,6 +7,7 @@ import java.util.Map;
  */
 
 public class Post {
+    private String id;
     private String authorFirstName;
     private String authorLastName;
     private String authorPhotoUrl;
@@ -23,6 +24,15 @@ public class Post {
 
     public void setAuthorFirstName(String authorFirstName) {
         this.authorFirstName = authorFirstName;
+    }
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public boolean isRepost() {

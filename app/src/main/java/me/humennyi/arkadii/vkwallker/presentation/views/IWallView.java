@@ -1,5 +1,8 @@
 package me.humennyi.arkadii.vkwallker.presentation.views;
 
+import java.util.List;
+
+import me.humennyi.arkadii.vkwallker.domain.Post;
 import me.humennyi.arkadii.vkwallker.domain.User;
 import me.humennyi.arkadii.vkwallker.domain.VkInfo;
 
@@ -12,7 +15,10 @@ public interface IWallView extends IProgressView {
 
     void hideAppendProgress();
 
-    void setData(VkInfo response);
+    void addData(List<Post> response);
 
-    void addData(VkInfo response);
+    void setData(User cachedUser, List<Post> cachedPosts);
+
+    void showRefresh();
+    void hideRefresh();
 }

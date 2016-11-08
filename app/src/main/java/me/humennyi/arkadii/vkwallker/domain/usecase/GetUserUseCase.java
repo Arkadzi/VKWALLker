@@ -1,8 +1,6 @@
 package me.humennyi.arkadii.vkwallker.domain.usecase;
 
 import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
-import android.util.Log;
 
 import java.util.List;
 
@@ -20,53 +18,69 @@ import rx.functions.Func1;
  */
 public class GetUserUseCase extends UseCase<VkInfo> {
     private final SessionRepository repository;
-    @Nullable
-    private VkInfo vkInfo;
     private int count;
-    private int offset;
+    private boolean forceNew=true;
+    private boolean rewrite;
+    private final VkInfo vkInfo = new VkInfo();
 
     @Inject
     public GetUserUseCase(SessionRepository repository) {
         this.repository = repository;
     }
 
-
     @Override
     protected Observable<VkInfo> getUseCaseObservable() {
-        return repository.getUserInfo().flatMap(new Func1<User, Observable<Pair<List<Post>, Integer>>>() {
-            @Override
-            public Observable<Pair<List<Post>, Integer>> call(User user) {
-                return repository.getPosts(offset, count);
-            }
-        }, (user1, pair) -> new VkInfo(user1, pair.first, pair.second))
-                .doOnNext(vkInfo -> {
-                    if (this.vkInfo == null) {
-                        this.vkInfo = vkInfo;
-                    } else {
-                        this.vkInfo.getPost().addAll(vkInfo.getPost());
-                    }
-                    this.offset = this.vkInfo.getPost().size();
-                });
+        if (getCachedUser() == null) {
+            return repository.getUserInfo(forceNew).flatMap(new Func1<User, Observable<List<Post>>>() {
+                @Override
+                public Observable<List<Post>> call(User user) {
+                    return repository.getPosts(getOffset(), count, forceNew);
+                }
+            }, VkInfo::new).doOnNext(vkInfo -> {
+                if (rewrite) {
+                    vkInfo.setPosts(null);
+                }
+                rewrite = false;
+                this.vkInfo.setUser(vkInfo.getUser());
+                this.vkInfo.addPosts(vkInfo.getPosts());
+            });
+        } else {
+            return repository.getPosts(getOffset(), count, forceNew)
+                    .map(posts -> new VkInfo(null, posts))
+                    .doOnNext(vkInfo1 -> {
+                        rewrite = false;
+                        this.vkInfo.addPosts(vkInfo1.getPosts());
+                    });
+        }
     }
 
     public void setCount(int count) {
         this.count = count;
     }
 
-    @Nullable
-    public VkInfo getCache() {
-        return vkInfo;
+//    public void setForceNew(boolean forceNew) {
+//        this.forceNew = forceNew;
+//    }
+
+    public User getCachedUser() {
+        return vkInfo.getUser();
     }
+
+    public List<Post> getCachedPosts() {
+        return vkInfo.getPosts();
+    }
+
+    private int getOffset() {
+        if (getCachedPosts() == null) return 0;
+        return getCachedPosts().size();
+    }
+
+    public void setRewrite(boolean rewrite) {
+        this.rewrite = rewrite;
+
+    }
+
     public boolean hasCache() {
-        return vkInfo != null;
-    }
-
-    public int getOffset() {
-        return offset;
-    }
-
-    public void clear() {
-        offset = 0;
-        vkInfo = null;
+        return getCachedPosts() != null && getCachedUser() != null;
     }
 }

@@ -1,12 +1,20 @@
 package me.humennyi.arkadii.vkwallker.data.di;
 
+import android.content.Context;
+
+import com.vk.sdk.api.model.VKAttachments;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import me.humennyi.arkadii.vkwallker.data.SessionDataRepository;
 import me.humennyi.arkadii.vkwallker.data.api.VkApi;
+import me.humennyi.arkadii.vkwallker.data.cache.DBHelper;
+import me.humennyi.arkadii.vkwallker.data.cache.UserCache;
+import me.humennyi.arkadii.vkwallker.data.cache.UserCacheImpl;
 import me.humennyi.arkadii.vkwallker.domain.SessionRepository;
+import me.humennyi.arkadii.vkwallker.domain.User;
 
 
 @Module
@@ -14,8 +22,20 @@ public class DataModule {
 
     @Provides
     @Singleton
-    public VkApi provideVkApi() {
-        return new VkApi();
+    public DBHelper provideDBHelper(Context context) {
+        return new DBHelper(context);
+    }
+
+    @Provides
+    @Singleton
+    public UserCache provideUserCache(DBHelper dbHelper, Context context){
+        return new UserCacheImpl(dbHelper, context);
+    }
+
+    @Provides
+    @Singleton
+    public VkApi provideVkApi(UserCache userCache) {
+        return new VkApi(userCache);
     }
 
     @Provides

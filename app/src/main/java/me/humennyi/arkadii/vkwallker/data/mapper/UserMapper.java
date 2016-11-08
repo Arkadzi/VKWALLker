@@ -2,7 +2,7 @@ package me.humennyi.arkadii.vkwallker.data.mapper;
 
 import android.util.Log;
 
-import me.humennyi.arkadii.vkwallker.data.UserEntity;
+import me.humennyi.arkadii.vkwallker.data.entities.UserEntity;
 import me.humennyi.arkadii.vkwallker.domain.User;
 
 /**

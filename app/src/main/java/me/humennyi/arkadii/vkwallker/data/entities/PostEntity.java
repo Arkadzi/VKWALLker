@@ -1,4 +1,4 @@
-package me.humennyi.arkadii.vkwallker.data;
+package me.humennyi.arkadii.vkwallker.data.entities;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -9,6 +9,7 @@ import java.util.List;
  */
 
 public class PostEntity {
+    private String id;
     @SerializedName("from_id")
     private String fromId;
     private long date;
@@ -21,6 +22,14 @@ public class PostEntity {
     private String fromPhoto;
     @SerializedName("copy_history")
     private List<PostEntity> copyHistory;
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
 
     public List<PostEntity> getCopyHistory() {
         return copyHistory;
@@ -77,7 +86,8 @@ public class PostEntity {
     @Override
     public String toString() {
         return "PostEntity{" +
-                "fromId='" + fromId + '\'' +
+                "id='" + id + '\'' +
+                ", fromId='" + fromId + '\'' +
                 ", date=" + date +
                 ", text='" + text + '\'' +
                 ", likes=" + likes +
@@ -86,6 +96,7 @@ public class PostEntity {
                 ", fromFirstName='" + fromFirstName + '\'' +
                 ", fromLastName='" + fromLastName + '\'' +
                 ", fromPhoto='" + fromPhoto + '\'' +
+                ", copyHistory=" + copyHistory +
                 '}';
     }
 }

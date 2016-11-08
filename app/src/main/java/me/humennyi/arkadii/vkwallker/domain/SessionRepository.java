@@ -12,6 +12,6 @@ import rx.Observable;
  */
 
 public interface SessionRepository {
-    Observable<User> getUserInfo();
-    Observable<Pair<List<Post>, Integer>> getPosts(int offset, int count);
+    Observable<User> getUserInfo(boolean forceUpdated);
+    Observable<List<Post>> getPosts(int offset, int count, boolean forceUpdated);
 }

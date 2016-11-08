@@ -2,15 +2,19 @@ package me.humennyi.arkadii.vkwallker.presentation.presenters;
 
 import android.support.annotation.NonNull;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import me.humennyi.arkadii.vkwallker.domain.Post;
 import me.humennyi.arkadii.vkwallker.domain.VkInfo;
 import me.humennyi.arkadii.vkwallker.domain.subscribers.BaseProgressSubscriber;
 import me.humennyi.arkadii.vkwallker.domain.subscribers.SimpleSubscriberListener;
 import me.humennyi.arkadii.vkwallker.domain.usecase.GetUserUseCase;
 import me.humennyi.arkadii.vkwallker.presentation.utils.Messages;
 import me.humennyi.arkadii.vkwallker.presentation.views.IWallView;
+import rx.Subscriber;
 
 /**
  * Created by arkadii on 11/5/16.
@@ -33,7 +37,7 @@ public class WallPresenter extends ProgressPresenter<IWallView> implements IWall
     public void onCreate(IWallView view) {
         super.onCreate(view);
         if (getUserUseCase.hasCache()) {
-            view.setData(getUserUseCase.getCache());
+            view.setData(getUserUseCase.getCachedUser(), getUserUseCase.getCachedPosts());
             if (getUserUseCase.isWorking()) {
                 getUserUseCase.execute(getAppendQuerySubscriber());
             }
@@ -85,7 +89,7 @@ public class WallPresenter extends ProgressPresenter<IWallView> implements IWall
                 super.onNext(response);
                 IWallView view = getView();
                 if (view != null) {
-                    view.addData(response);
+                    view.addData(response.getPosts());
                 }
             }
         };
@@ -99,7 +103,7 @@ public class WallPresenter extends ProgressPresenter<IWallView> implements IWall
                 super.onNext(response);
                 IWallView view = getView();
                 if (view != null) {
-                    view.setData(response);
+                    view.setData(response.getUser(), response.getPosts());
                 }
             }
         };
@@ -108,14 +112,54 @@ public class WallPresenter extends ProgressPresenter<IWallView> implements IWall
     @Override
     public void onRefresh() {
         getUserUseCase.unsubscribe();
-        getUserUseCase.clear();
-        getUserUseCase.execute(getFirstQuerySubscriber());
+        getUserUseCase.setRewrite(true);
+        getUserUseCase.execute(getRefreshQuerySubscriber());
+    }
+
+    private BaseProgressSubscriber<VkInfo> getRefreshQuerySubscriber() {
+        return new BaseProgressSubscriber<VkInfo>(new SimpleSubscriberListener() {
+            @Override
+            public void onStartLoading() {
+                super.onStartLoading();
+                IWallView view = getView();
+                if (view != null) {
+                    view.showRefresh();
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                super.onError(t);
+                IWallView view = getView();
+                if (view != null) {
+                    view.hideRefresh();
+                }
+                showMessage(getMessages().getError(t));
+            }
+
+            @Override
+            public void onCompleted() {
+                super.onCompleted();
+                IWallView view = getView();
+                if (view != null) {
+                    view.hideRefresh();
+                }
+            }
+        }) {
+            @Override
+            public void onNext(VkInfo response) {
+                super.onNext(response);
+                IWallView view = getView();
+                if (view != null) {
+                    view.setData(response.getUser(), response.getPosts());
+                }
+            }
+        };
     }
 
     @Override
     public void onListScrolled() {
-        VkInfo cache = getUserUseCase.getCache();
-        if (!getUserUseCase.isWorking() && cache != null && cache.getCount() > getUserUseCase.getOffset()) {
+        if (!getUserUseCase.isWorking()) {
             getUserUseCase.execute(getAppendQuerySubscriber());
         }
     }

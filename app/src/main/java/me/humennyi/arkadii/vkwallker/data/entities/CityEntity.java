@@ -1,4 +1,6 @@
-package me.humennyi.arkadii.vkwallker.data;
+package me.humennyi.arkadii.vkwallker.data.entities;
+
+import java.io.Serializable;
 
 /**
  * Created by arkadii on 11/5/16.

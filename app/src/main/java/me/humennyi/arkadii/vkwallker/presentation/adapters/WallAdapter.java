@@ -1,8 +1,6 @@
 package me.humennyi.arkadii.vkwallker.presentation.adapters;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -153,10 +151,10 @@ public class WallAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return data.size();
     }
 
-    public void setData(VkInfo response) {
+    public void setData(User user, List<Post> posts) {
         data.clear();
-        data.add(response.getUser());
-        data.addAll(response.getPost());
+        data.add(user);
+        data.addAll(posts);
         notifyDataSetChanged();
     }
 
@@ -182,6 +180,7 @@ public class WallAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         DrawableCompat.setTint(drawable, color);
         textView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
     }
+
 
 
     static class PostViewHolder extends RecyclerView.ViewHolder {
